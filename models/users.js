@@ -76,7 +76,7 @@ const usersModel = {
           const query = update(request, value.rows[0])
           pg.query(query, err => {
             if (!err) {
-              photo ? fs.unlinkSync(`public${value.rows[0].photo}`) : null
+              photo && value.rows[0].photo !== null ? fs.unlinkSync(`public${value.rows[0].photo}`) : null
               resolve({
                 message: 'Success update user',
                 status: 200

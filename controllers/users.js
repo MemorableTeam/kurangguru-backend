@@ -16,7 +16,7 @@ const usersController = {
   },
 
   updateUsers: (req, res) => {
-    const request = { ...req.body, photo: req.file ? `/upload/photo/${req.file.fieldname}` : undefined }
+    const request = { ...req.body, photo: req.file ? `/uploads/photo/${req.file.filename}` : undefined }
     usersModel.updateUsers(request)
       .then(result => res.status(result.status).send(result))
       .catch(err => res.status(err.status).send(err))
