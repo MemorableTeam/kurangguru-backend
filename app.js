@@ -4,8 +4,8 @@ require('dotenv').config()
 const port = 3030;
 const bodyParser = require('body-parser');
 
-app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 const router = require('./routes')
 router(app, '/kurangguru/api/v1')
