@@ -1,9 +1,9 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
-const pg = require("../helpers/connect_db");
+const pg = require("../helpers/connection");
 const queryAuth = require("../helpers/queryAuth");
 const jwt = require("jsonwebtoken");
-const fromResponse = require("../helpers/fromResponse");
+const formResponse = require("../helpers/formResponse");
 
 const authModel = {
   login: (request) => {
@@ -12,8 +12,8 @@ const authModel = {
       const query = queryAuth.login(request);
       pg.query(query, (err, result) => {
         if (!err) {
-          if (result.rows.length < 1) {
-            reject(fromResponse("Wrong email/password", 400));
+          if (result.rows.length > 1) {
+            reject(formResponse("Wrong email/password", 400));
           } else {
             bcrypt.compare(
               password,
@@ -31,7 +31,7 @@ const authModel = {
                       (errToken, resToken) => {
                         if (!errToken) {
                           resolve(
-                            fromResponse("Login success", 200, {
+                            formResponse("Login success", 200, {
                               id: result.rows[0].id,
                               role: result.rows[0].role,
                               token: resToken,
@@ -46,23 +46,52 @@ const authModel = {
                       }
                     );
                   } else {
-                    reject(fromResponse("Wrong email/password", 400));
+                    reject(formResponse("Wrong email/password", 400));
                   }
                 } else {
-                  reject(fromResponse("Login failed", 500));
+                  reject(formResponse("Login failed", 500));
                 }
               }
             );
           }
         } else {
-          reject(fromResponse("Wrong email/password", 400));
+          reject(formResponse("Wrong email/password", 400));
         }
       });
     });
   },
 
   register: (request) => {
-    
+    return new Promise((resolve, reject)=>{
+      const {username, email ,password} = request.request;
+      pg.query(`SELECT email FROM users WHERE email = '${email}'`, (err, value)=>{
+        if(!err){
+          if(value.rows.length < 1){
+            bcrypt.hash(password, 10, function (errHash , hash){
+              if(!errHash){
+                const newUser = {
+                  username: username,
+                  email: email,
+                  password: hash,
+                }
+                const query = queryAuth.register(newUser)
+                pg.query(query, (err)=>{
+                  if(!err){
+                    resolve(formResponse("Register sucsess", 201))
+                  }else{
+                    reject(formResponse("Register failed", 500))
+                  }
+                })
+              }else{
+                reject(formResponse("Register failed",500 ))
+              }
+            })
+          }else{
+            reject(formResponse("User exist", 400))
+          }
+        }
+      })
+    })
   },
 
   checkUser: (request) => {
@@ -74,6 +103,31 @@ const authModel = {
   },
 
   changePassword: (request) => {
+    return new Promise((resolve, reject)=>{
+      pg.query(`SELECT id from users WHERE id =  ${request.id}`, (err, result)=>{
+        if(!err){
+          if(result.rows.length < 1){
+            reject(formResponse(`User doesn't exist`, 400))
+            return
+          }
+          bcrypt.hash(request.password, 10, function(errHash, hash){
+            if(!err){
+              pg.query(`UPDATE users SET password= '${hash}'`, (err)=>{
+                if(!err){
+                  resolve(formResponse("Change password succsess bro..!!", 201))
+                }else{
+                  reject(formResponse("Uh.. Change password failed", 500))
+                }
+              })
+            }else{
+              reject(formResponse("Uh.. Change password failed", 500))
+            }
+          })
+        }else{
+          reject(formResponse("Uh.. Change password failed", 500))
+        }
+      })
+    })
   }
 };
 
