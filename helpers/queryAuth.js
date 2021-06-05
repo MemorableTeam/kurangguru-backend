@@ -7,8 +7,7 @@ const queryAuth = {
   
     login: (request) => {
       const { email } = request;
-      const getUser = `SELECT id, email, password, role from users where email = '${email}'`;
-  
+      const getUser = `SELECT id, email, password, role from users where email = '${email}' OR username='${email}'`;
       return getUser;
     },
   };

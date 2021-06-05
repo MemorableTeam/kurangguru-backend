@@ -15,6 +15,9 @@ const authModel = {
           if (result.rows.length > 1) {
             reject(formResponse("Wrong email/password", 400));
           } else {
+            if(result.rows[0].verified_at == null){
+              reject(formResponse("Email not verified", 400))
+            }
             bcrypt.compare(
               password,
               result.rows[0].password,
@@ -24,6 +27,7 @@ const authModel = {
                     const payload = {
                       id: result.rows[0].id,
                       role: result.rows[0].role,
+                      verified_at : result.rows[0].verified_at
                     };
                     jwt.sign(
                       payload,
