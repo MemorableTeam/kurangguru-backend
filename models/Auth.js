@@ -63,7 +63,7 @@ const authModel = {
 
   register: (request) => {
     return new Promise((resolve, reject)=>{
-      const {username, email ,password} = request.request;
+      const {username, email ,password} = request;
       pg.query(`SELECT email FROM users WHERE email = '${email}'`, (err, value)=>{
         if(!err){
           if(value.rows.length < 1){
@@ -79,11 +79,11 @@ const authModel = {
                   if(!err){
                     resolve(formResponse("Register sucsess", 201))
                   }else{
-                    reject(formResponse("Register failed", 500))
+                    reject(formResponse(`Register failed ${err}`, 500))
                   }
                 })
               }else{
-                reject(formResponse("Register failed",500 ))
+                reject(formResponse(`Register failed ${err}`,500 ))
               }
             })
           }else{
@@ -94,8 +94,27 @@ const authModel = {
     })
   },
 
-  checkUser: (request) => {
-    
+  registerVerify: (request) => {
+    return new Promise((resolve, reject)=>{
+      const{ email } = request;
+      pg.query(`SELECT email FROM users WHERE email = '${email}'`, (err, val)=>{
+        if(!err){
+          if(val.rows.length > 0){
+            pg.query(`UPDATE users SET verified_at = 'NOW()' WHERE email = '${email}'`, (error, value)=>{
+              if(!error){
+                resolve(formResponse("Verify Success", 201))
+              }else{
+                reject(formResponse("Verify Failed", 400))
+              }
+            })
+          }else{
+            reject(formResponse("User not Found", 400))
+          }
+        }else{
+          reject(formResponse("Error verify", 500))
+        }
+      })
+    })
   },
 
   changeResquest: (request) => {

@@ -1,8 +1,7 @@
 const queryAuth = {
     register: (request) => {
-      const { email, password } = request;
-      const query = `INSERT into users(email, password, role, created_at) VALUES('${email}', '${password}', 'user', 'now()')`;
-  
+      const { email, password, username } = request;
+      const query = `INSERT into users(username, email, password, role, created_at) VALUES('${username}','${email}', '${password}', 'user', 'now()')`;
       return query;
     },
   

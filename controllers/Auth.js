@@ -1,6 +1,7 @@
 const authModel = require("../models/Auth");
+const transporter = require("../helpers/sendMail")
 require("dotenv").config();
-// const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 // const nodemailer = require("nodemailer");
 // const UserModel = require("../models/Auth");
 // const transporter = nodemailer.createTransport({
@@ -30,47 +31,70 @@ const authController = {
   },
 
   verifyEmail: (req, res) => {
-    // const { token } = req.body;
-    // if (!token) {
-    //   res.status(400).send({
-    //     message: "Token not be empty",
-    //     statusCode: 400,
-    //   });
-    // } else {
-    //   jwt.verify(token, process.env.JWT_NODEMAILER_KEY, (err, decoded) => {
-    //     if (err) {
-    //       res.status(400).send({
-    //         message: "Incorrect or Expired token",
-    //         statusCode: 400,
-    //       });
-    //     } else {
-    //       authModel
-    //         .register(decoded)
-    //         .then((result) => {
-    //           res.status(result.statusCode).send({ ...result, decoded });
-    //         })
-    //         .catch((err) => {
-    //           res.status(err.statusCode).send(err);
-    //         });
-    //     }
-    //   });
-    // }
+    const token = req.header('token');
+    const {code} = req.body
+    if (!token) {
+      res.status(400).send({
+        message: "Token not be empty",
+        statusCode: 400,
+      });
+    } else {
+      if(!code){
+        res.status(400).send({
+          message: "Code Not Null",
+          statusCode: 400,
+        });
+      }
+      jwt.verify(token, process.env.JWT_NODEMAILER_KEY, (err, decoded) => {
+        if (err) {
+          res.status(400).send({
+            message: "Incorrect or Expired token",
+            statusCode: 400,
+          });
+        } else {
+           console.log(decoded)
+          if(decoded.code != code){
+            res.status(400).send({
+              message:"Incorrect code input",
+              statusCode:400
+            });
+          }
+          let data = decoded.request
+          authModel.registerVerify(data)
+          .then((result)=>{
+            res.status(result.statusCode).send(result)
+          }).catch((err)=>{
+            res.status(err.statusCode).send(err);
+          })
+          /* authModel
+            .register(decoded)
+            .then((result) => {
+              res.status(result.statusCode).send({ ...result, decoded });
+            })
+            .catch((err) => {
+              res.status(err.statusCode).send(err);
+            }); */
+        }
+      });
+    }
   },
 
   register: async (req, res) => {
     const request = { ...req.body };
+    let code = Math.floor(100000 + Math.random() * 900000);   
+    code = String(code);
+    code = code.substring(0,4);
     if (!req.body.acc) {
       res.status(400).send({
         message: "User must accepted aggrement",
         statusCode: 400,
       });
-      return;
     }
     try {
-      const result = await authModel.checkUser(req.body);
-      const token = jwt.sign({ request }, process.env.JWT_NODEMAILER_KEY, {
+      const result = await authModel.register(req.body);
+      const token = jwt.sign({ request, code : code }, process.env.JWT_NODEMAILER_KEY, {
         expiresIn: "20m",
-      });
+      })
       transporter
         .sendMail({
           from: "Trickitz Admin <no-reply@admin.tickitz.com>", // sender address
@@ -78,23 +102,31 @@ const authController = {
           subject: "Account Activation Token", // Subject line
           text: token, // plain text body
           html: `
-            <h1>Copy the token to activated your account</h1>
-            <h3>${token}</h3>
+            <h1>Input code verify in Web</h1>
+            <h3>Code : </h3>
+            <h2>${code}</h2>
           `, // html body
         })
         .then(() => {
+          console.log()
           res.status(result.statusCode).send({
             ...result,
+            data : {
+              ...req.body,
+              token : token
+            }
           });
         })
-        .catch(() => {
+        .catch((err) => {
           res.status(500).send({
-            message: "Register error",
+            message: `Register error ${err}`,
             statusCode: 500,
           });
         });
     } catch (err) {
-      res.status(err.statusCode).send(err);
+      console.log(err)
+      const status = err.status || 500;
+      res.status(status).send(err);
     }
   },
 
