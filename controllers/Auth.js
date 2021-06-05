@@ -14,7 +14,7 @@ const jwt = require("jsonwebtoken");
 // });
 
 const authController = {
-  login: async (req, res) => {
+  login: (req, res) => {
     if (!req.body.email || !req.body.password) {
       res.status(400).send({
         message: "Request not be empty",
@@ -22,12 +22,18 @@ const authController = {
       });
       return;
     }
-    try {
+    authModel.login(req.body)
+    .then((result)=>{
+      res.status(result.statusCode).send(result)
+    }).catch((err)=>{
+      res.status(err.statusCode).send(err);
+    })
+   /*  try {
       const result = await authModel.login(req.body);
       res.status(result.statusCode).send(result);
     } catch (err) {
       res.status(err.statusCode).send(err);
-    }
+    } */
   },
 
   verifyEmail: (req, res) => {
@@ -45,7 +51,7 @@ const authController = {
           statusCode: 400,
         });
       }
-      jwt.verify(token, process.env.JWT_NODEMAILER_KEY, (err, decoded) => {
+      jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
         if (err) {
           res.status(400).send({
             message: "Incorrect or Expired token",
@@ -66,14 +72,6 @@ const authController = {
           }).catch((err)=>{
             res.status(err.statusCode).send(err);
           })
-          /* authModel
-            .register(decoded)
-            .then((result) => {
-              res.status(result.statusCode).send({ ...result, decoded });
-            })
-            .catch((err) => {
-              res.status(err.statusCode).send(err);
-            }); */
         }
       });
     }

@@ -39,7 +39,7 @@ const authModel = {
                           );
                         } else {
                           reject({
-                            message: "Login error",
+                            message: `Login error ${errToken}`,
                             statusCode: 500,
                           });
                         }
