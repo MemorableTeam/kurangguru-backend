@@ -2,16 +2,6 @@ const authModel = require("../models/Auth");
 const transporter = require("../helpers/sendMail")
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
-// const nodemailer = require("nodemailer");
-// const UserModel = require("../models/Auth");
-// const transporter = nodemailer.createTransport({
-//   host: isiDisini,
-//   port: isiDisini,
-//   auth: {
-//     user: isiDisini,
-//     pass: isiDisini,
-//   },
-// });
 
 const authController = {
   login: (req, res) => {
@@ -28,12 +18,6 @@ const authController = {
     }).catch((err)=>{
       res.status(err.statusCode).send(err);
     })
-   /*  try {
-      const result = await authModel.login(req.body);
-      res.status(result.statusCode).send(result);
-    } catch (err) {
-      res.status(err.statusCode).send(err);
-    } */
   },
 
   verifyEmail: (req, res) => {
@@ -77,7 +61,60 @@ const authController = {
     }
   },
 
+  // ini buat development
   register: async (req, res) => {
+    const request = { ...req.body };
+    let code = Math.floor(100000 + Math.random() * 900000);   
+    code = String(code);
+    code = code.substring(0,4);
+    if (!req.body.acc) {
+      res.status(400).send({
+        message: "User must accepted aggrement",
+        statusCode: 400,
+      });
+    }
+    try {
+      const result = await authModel.register(req.body);
+      const token = jwt.sign({ request, code : code }, process.env.JWT_NODEMAILER_KEY, {
+        expiresIn: "20m",
+      })
+      transporter
+        .sendMail({
+          from: "Kurang Guru Admin <no-reply@admin.kurangguru.com>", // sender address
+          to: request.email, // list of receivers
+          subject: "Account Activation PIN", // Subject line
+          text: token, // plain text body
+          html: `
+            <h1> Input PIN verify in Web </h1>
+            <h3> Pin : </h3>
+            <h2>${code}</h2>
+          `, // html body
+        })
+        .then(() => {
+          console.log()
+          res.status(result.statusCode).send({
+            ...result,
+            data : {
+              ...req.body,
+              token : token
+            }
+          });
+        })
+        .catch((err) => {
+          res.status(500).send({
+            message: `Register error ${err}`,
+            statusCode: 500,
+          });
+        });
+    } catch (err) {
+      console.log(err)
+      const status = err.status || 500;
+      res.status(status).send(err);
+    }
+  },
+ /* 
+    //ini buat production 
+    register: async (req, res) => {
     const request = { ...req.body };
     let code = Math.floor(100000 + Math.random() * 900000);   
     code = String(code);
@@ -126,40 +163,40 @@ const authController = {
       const status = err.status || 500;
       res.status(status).send(err);
     }
-  },
+  }, */
 
   forgotPassword: async (req, res) => {
-    // const email = req.body.email;
-    // try {
-    //   const result = await authModel.checkUser(email);
-    //   const token = jwt.sign({ ...req.body }, process.env.JWT_NODEMAILER_KEY, {
-    //     expiresIn: "20m",
-    //   });
-    //   transporter
-    //     .sendMail({
-    //       from: "Trickitz Admin <no-reply@admin.tickitz.com>", // sender address
-    //       to: email, // list of receivers
-    //       subject: "Confirm your email", // Subject line
-    //       text: token, // plain text body
-    //       html: `
-    //         <h1>Copy the token to change your password</h1>
-    //         <h3>${token}</h3>
-    //       `, // html body
-    //     })
-    //     .then(() => {
-    //       res.status(result.statusCode).send({
-    //         ...result,
-    //       });
-    //     })
-    //     .catch(() => {
-    //       res.status(500).send({
-    //         message: "Error occurs",
-    //         statusCode: 500,
-    //       });
-    //     });
-    // } catch (err) {
-    //   res.status(err.statusCode).send(err);
-    // }
+    const email = req.body.email;
+    try {
+      const result = await authModel.checkUser(email);
+      const token = jwt.sign({ ...req.body }, process.env.JWT_NODEMAILER_KEY, {
+        expiresIn: "20m",
+      });
+      transporter
+        .sendMail({
+          from: "Trickitz Admin <no-reply@admin.tickitz.com>", // sender address
+          to: email, // list of receivers
+          subject: "Confirm your email", // Subject line
+          text: token, // plain text body
+          html: `
+            <h1>Copy the token to change your password</h1>
+            <h3>${token}</h3>
+          `, // html body
+        })
+        .then(() => {
+          res.status(result.statusCode).send({
+            ...result,
+          });
+        })
+        .catch(() => {
+          res.status(500).send({
+            message: "Error occurs",
+            statusCode: 500,
+          });
+        });
+    } catch (err) {
+      res.status(err.statusCode).send(err);
+    }
   },
 
   emailVerified: (req, res) => {

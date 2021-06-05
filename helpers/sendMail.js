@@ -1,13 +1,13 @@
 const nodeMailer = require('nodemailer')
 
 const transporter = nodeMailer.createTransport({
-    port:process.env.MAIL_PORT,
-    host:`${process.env.MAIL_HOST}`,
+    port:process.env.TEST_MAIL_PORT,
+    host:`${process.env.TEST_MAIL_HOST}`,
     auth:{
-        user:`${process.env.MAIL_USER}`,
-        pass:`${process.env.MAIL_PASSWORD}`,
+        user:`${process.env.TEST_MAIL_USER}`,
+        pass:`${process.env.TEST_MAIL_PASSWORD}`,
     },
-    secure:true
+ /*    secure:false */
 })
 
 module.exports = transporter

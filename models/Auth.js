@@ -102,7 +102,7 @@ const authModel = {
           if(val.rows.length > 0){
             pg.query(`UPDATE users SET verified_at = 'NOW()' WHERE email = '${email}'`, (error, value)=>{
               if(!error){
-                resolve(formResponse("Verify Success", 201))
+                resolve(formResponse("Verify Success", 200))
               }else{
                 reject(formResponse("Verify Failed", 400))
               }
