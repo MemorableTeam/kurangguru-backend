@@ -3,7 +3,7 @@ const usersModel = require("../models/users")
 
 const usersController = {
   getUsers: (req, res) => {
-    const request = { ...req.body }
+    const request = { ...req.query }
     if (request.id) {
       usersModel.getUserById(request)
         .then(result => res.status(result.status).send(result))
