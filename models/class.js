@@ -1,16 +1,47 @@
 const pg = require("../helpers/connection")
-const { getAll } = require('../helpers/queryClass')
+const fromResponse = require("../helpers/formResponse")
+const { getAll, getClassById, getClassBySchedule } = require('../helpers/queryClass')
 
 const classModel = {
   getAllClass: (request) => {
     return new Promise((resolve, reject) => {
-
+      pg.query(getAll(request).queryPaginate, (err, result) => {
+        if (!err) {
+          if (result.rowCount < 1) reject(fromResponse('Class not found!', 400, {
+            page_size: request.page_size || 10,
+            current_page: request.current_page || 1,
+            class_list: {}
+          }))
+          pg.query(getAll(request).getTotalPage, (err2, total) => {
+            if (!err2) {
+              resolve(fromResponse('Success!', 200, {
+                total_pages: Math.ceil(total.rowCount / (request.page_size || 10)),
+                page_size: request.page_size || 10,
+                current_page: request.current_page || 1,
+                class_list: result.rows
+              }))
+            } else {
+              reject(fromResponse('Failed!', 500))
+            }
+          })
+        } else {
+          reject(fromResponse('Failed!', 500))
+        }
+      })
     })
   },
 
   getClassBySchedule: (request) => {
     return new Promise((resolve, reject) => {
-
+      pg.query(getClassBySchedule(request), (err, result) => {
+        if (!err) {
+          if (result.rowCount < 1) reject(fromResponse('Class not found!', 400))
+          resolve(fromResponse('Success!', 200, result.rows))
+        } else {
+          console.log(err)
+          reject(fromResponse('Failed!', 500))
+        }
+      })
     })
   },
 
@@ -22,7 +53,14 @@ const classModel = {
 
   getClassById: (request) => {
     return new Promise((resolve, reject) => {
-
+      pg.query(getClassById(request), (err, result) => {
+        if (!err) {
+          if (result.rowCount < 1) reject(fromResponse('Class not found!', 400))
+          resolve(fromResponse('Success!', 200, result.rows[0]))
+        } else {
+          reject(fromResponse('Failed!', 500))
+        }
+      })
     })
   },
 
