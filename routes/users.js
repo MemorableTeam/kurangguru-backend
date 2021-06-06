@@ -5,6 +5,6 @@ const upload = require('../helpers/upload');
 const router = express.Router();
 
 router.get('/', usersController.getUsers)
-router.patch('/', hashing, upload.uploadPhoto, usersController.updateUsers)
+router.patch('/', upload.uploadPhoto, hashing, usersController.updateUsers)
 
 module.exports = router
