@@ -168,7 +168,7 @@ const authController = {
   forgotPassword: async (req, res) => {
     const email = req.body.email;
     try {
-      const result = await authModel.checkUser(email);
+      const result = await authModel.forgotPasswordUser(email);
       const token = jwt.sign({ ...req.body }, process.env.JWT_NODEMAILER_KEY, {
         expiresIn: "20m",
       });
