@@ -20,7 +20,12 @@ const classController = {
       .catch(err => res.status(err.statusCode).send(err))
   },
 
-  getClassByUser: (req, res) => { },
+  getClassByUser: (req, res) => {
+    const request = { ...req.query }
+    classModel.getClassByUser(request)
+      .then(result => res.status(result.statusCode).send(result))
+      .catch(err => res.status(err.statusCode).send(err))
+  },
 };
 
 module.exports = classController

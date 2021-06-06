@@ -1,3 +1,5 @@
+const { request } = require("express")
+
 const queryClass = {
   getAll: (request) => {
     let query = `select a.id, a.name, a.category, a.description, a.level, a.price, a.day, a.start_time, a.end_time from class as a left join user_class as b on b.class_id = a.id where b.user_id is null or b.user_id != ${request.user_id}`
@@ -13,7 +15,19 @@ const queryClass = {
   },
 
   getClassBySchedule: (request) => {
-    // let query = `select a.* from class as a join topics as b on b.id_class = a.id`
+    let query = `select a.*, count(case b.is_finished when true then 0 end) as topic_completed, count(case b.is_finished when false then 0 end) as topic_uncompleted, count(b.is_finished) as total_topic from class as a 
+    join topics as b on b.id_class = a.id group by a.id`
+
+    if (request.user_id) query = `select a.* from (${query}) as a inner join user_class as b on b.class_id = a.id where b.user_id = ${request.user_id}`
+    return query
+  },
+
+  getClassByUser: (request) => {
+    // const score = `select * from topics as a left join score`
+    // const query = `select a.*, count(case b.is_finished when true then 0 end) as topic_completed, count(case b.is_finished when false then 0 end) as topic_uncompleted, count(b.is_finished) as total_topic from class as a
+    // join topics as b on b.id_class = a.id 
+    // inner join user_class as c on c.class_id = a.id where c.user_id = ${request.user_id} 
+    // group by a.id, c.id`
 
     // return query
   },

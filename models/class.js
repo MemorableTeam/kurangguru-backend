@@ -1,6 +1,6 @@
 const pg = require("../helpers/connection")
 const fromResponse = require("../helpers/formResponse")
-const { getAll, getClassById, getClassBySchedule } = require('../helpers/queryClass')
+const { getAll, getClassById, getClassBySchedule, getClassByUser } = require('../helpers/queryClass')
 
 const classModel = {
   getAllClass: (request) => {
@@ -47,7 +47,15 @@ const classModel = {
 
   getClassByUser: (request) => {
     return new Promise((resolve, reject) => {
-
+      pg.query(getClassByUser(request), (err, result) => {
+        if (!err) {
+          if (result.rowCount < 1) reject(fromResponse('Class not found!', 400))
+          resolve(fromResponse('Success!', 200, result.rows))
+        } else {
+          console.log(err)
+          reject(fromResponse('Failed!', 500))
+        }
+      })
     })
   },
 
