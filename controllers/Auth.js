@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const authController = {
   login: (req, res) => {
     if (!req.body.email || !req.body.password) {
+      console.log(req)
       res.status(400).send({
         message: "Request not be empty",
         statusCode: 400,
@@ -23,6 +24,7 @@ const authController = {
   verifyEmail: (req, res) => {
     const token = req.header('token');
     const {code} = req.body
+    console.log(code)
     if (!token) {
       res.status(400).send({
         message: "Token not be empty",
@@ -49,7 +51,8 @@ const authController = {
               statusCode:400
             });
           }
-          let data = decoded.request
+          let data = decoded
+          console.log(data)
           authModel.registerVerify(data)
           .then((result)=>{
             res.status(result.statusCode).send(result)
@@ -75,7 +78,8 @@ const authController = {
     }
     try {
       const result = await authModel.register(req.body);
-      const token = jwt.sign({ request, code : code }, process.env.JWT_NODEMAILER_KEY, {
+      const {id, username} = result.data
+      const token = jwt.sign({ id:id, username:username, code : code }, process.env.JWT_NODEMAILER_KEY, {
         expiresIn: "20m",
       })
       transporter
@@ -93,9 +97,7 @@ const authController = {
         .then(() => {
           console.log()
           res.status(result.statusCode).send({
-            ...result,
             data : {
-              ...req.body,
               token : token
             }
           });
