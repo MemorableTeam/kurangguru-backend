@@ -26,6 +26,20 @@ const classController = {
       .then(result => res.status(result.statusCode).send(result))
       .catch(err => res.status(err.statusCode).send(err))
   },
+
+  addNewClass: (req, res) => {
+    const request = { ...req.body }
+    classModel.addClass(request)
+      .then(result => res.status(result.statusCode).send(result))
+      .catch(err => res.status(err.statusCode).send(err))
+  },
+
+  editClass: (req, res) => {
+    const request = { ...req.body }
+    classModel.editClass(request)
+      .then(result => res.status(result.statusCode).send(result))
+      .catch(err => res.status(err.statusCode).send(err))
+  }
 };
 
 module.exports = classController

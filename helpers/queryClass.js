@@ -23,7 +23,7 @@ const queryClass = {
   },
 
   getClassByUser: (request) => {
-    // const score = `select * from topics as a left join score`
+    // const score = `select * from topics as a left join score as b on b.topic_id = a.id where b.user_id = ${request.user_id}`
     // const query = `select a.*, count(case b.is_finished when true then 0 end) as topic_completed, count(case b.is_finished when false then 0 end) as topic_uncompleted, count(b.is_finished) as total_topic from class as a
     // join topics as b on b.id_class = a.id 
     // inner join user_class as c on c.class_id = a.id where c.user_id = ${request.user_id} 
@@ -34,7 +34,20 @@ const queryClass = {
 
   getClassById: (request) => { return `select * from class where id = ${request.id}` },
 
+  addClass: (request) => {
+    const { name, category, description, price, day, start_time, end_time, level, fasilitator } = request
+    const query = `insert into class(name, category, description, price, day, start_time, end_time, level, created_at, id_fasilitator)
+                  VALUES('${name}', '${category}', '${description}', '${price}', '${day}', '${start_time}', '${end_time}', '${level}', 'now()', ${fasilitator})`
 
+    return query
+  },
+
+  editClass: (request, initial) => {
+    const { id, name = initial.name, category = initial.category, description = initial.description, price = initial.price, day = initial.day, start_time = initial.start_time, end_time = initial.end_time } = request
+    const query = `update class set name='${name}', category = '${category}', description='${description}', price=${price}, day='${day}', start_time='${start_time}', end_time='${end_time}', updated_at='now()' where id = ${id}`
+
+    return query
+  }
 }
 
 module.exports = queryClass
