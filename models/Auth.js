@@ -4,6 +4,7 @@ const pg = require("../helpers/connection");
 const queryAuth = require("../helpers/queryAuth");
 const jwt = require("jsonwebtoken");
 const formResponse = require("../helpers/formResponse");
+const fromResponse = require("../helpers/formResponse");
 
 const authModel = {
   login: (request) => {
@@ -121,8 +122,21 @@ const authModel = {
     })
   },
 
-  changeResquest: (request) => {
-    
+  forgotPasswordUser: (request) => {
+    return new Promise((resolve, reject)=>{
+      pg.query(`SELECT id from users WHERE email = '${request.email}'`, (err, res)=>{
+        if(!err){
+          if(res.rows.length < 1){
+            resolve(formResponse("Please check email to activated your account",
+            200,))
+          }else{
+            reject(formResponse(`Password not null`, 400))
+          }
+        }else{
+          reject(formResponse(`Change password failed`, 500))
+        }
+      })
+    })
   },
 
   changePassword: (request) => {
