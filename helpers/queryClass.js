@@ -13,6 +13,11 @@ const queryClass = {
   },
 
   getClassBySchedule: (request) => {
+    if (request.role === 'fasilitator') {
+      const query = `select a.*, count(b.id) as members from class as a left join user_class as b on b.class_id = a.id where a.id_fasilitator = ${request.user_id} and a.day = '${request.day}' group by a.id`
+      return query
+    }
+
     let query = `select a.*, count(case b.is_finished when true then 0 end) as topic_completed, count(case b.is_finished when false then 0 end) as topic_uncompleted, count(b.is_finished) as total_topic from class as a 
     join topics as b on b.id_class = a.id where day = '${request.day}' group by a.id`
 
@@ -21,6 +26,11 @@ const queryClass = {
   },
 
   getClassByUser: (request) => {
+    if (request.role === 'fasilitator') {
+      const query = `select a.*, count(b.id) as members from class as a left join user_class as b on b.class_id = a.id where a.id_fasilitator = ${request.user_id} group by a.id`
+      return query
+    }
+
     const score = `select * from topics as a left join score as b on b.topic_id = a.id where b.user_id = ${request.user_id}`
     const query = `select a.*, count(case d.is_finished when true then 0 end) as topic_completed, count(case d.is_finished when false then 0 end) as topic_uncompleted, count(d.is_finished) as total_topic, avg(b.score) from class as a
     left join (${score}) as b on b.id_class = a.id
