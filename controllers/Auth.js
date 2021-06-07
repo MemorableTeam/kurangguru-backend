@@ -4,6 +4,10 @@ require("dotenv").config();
 const jwt = require("jsonwebtoken");
 
 const authController = {
+  testing:(req, res)=>{
+    id = req.query.id
+    res.status(200).send({id : id})
+  },
   login: (req, res) => {
     if (!req.body.email || !req.body.password) {
       console.log(req)

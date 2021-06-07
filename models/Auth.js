@@ -28,7 +28,7 @@ const authModel = {
                     const payload = {
                       id: result.rows[0].id,
                       role: result.rows[0].role,
-                      verified_at: result.rows[0].verified_at,
+                      verified: result.rows[0].verified_at ? true : false,
                     };
                     jwt.sign(
                       payload,
@@ -39,6 +39,7 @@ const authModel = {
                             formResponse("Login success", 200, {
                               id: result.rows[0].id,
                               role: result.rows[0].role,
+                              verified: result.rows[0].verified_at ? true : false,
                               token: resToken,
                             })
                           );
@@ -124,7 +125,7 @@ const authModel = {
                     const payload = {
                       id: val.rows[0].id,
                       role: val.rows[0].role,
-                      verified_at: val.rows[0].verified_at,
+                      verified: val.rows[0].verified_at ? true : false,
                     };
                     jwt.sign(
                       payload,
@@ -135,6 +136,7 @@ const authModel = {
                             formResponse("Verify Success", 200, {
                               id: val.rows[0].id,
                               role: val.rows[0].role,
+                              verified : val.rows[0].verified_at ? true : false,
                               token: resToken,
                             })
                           );
