@@ -39,6 +39,7 @@ const classModel = {
           if (result.rowCount < 1) reject(fromResponse('Class not found!', 400))
           resolve(fromResponse('Success!', 200, result.rows))
         } else {
+          console.log(err)
           reject(fromResponse('Failed!', 500))
         }
       })
