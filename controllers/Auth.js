@@ -4,24 +4,24 @@ require("dotenv").config();
 const jwt = require("jsonwebtoken");
 
 const authController = {
-  testing:(req, res)=>{
+  testing: (req, res) => {
     id = req.query.id_user
-    res.status(200).send({user_id : id})
+    res.status(200).send({ user_id: id })
   },
   login: (req, res) => {
     if (!req.body.email || !req.body.password) {
       console.log(req)
       res.status(400).send({
         message: "Request not be empty",
-        statusCode: 400,
+        status: 400,
       });
       return;
     }
     authModel.login(req.body)
       .then((result) => {
-        res.status(result.statusCode).send(result)
+        res.status(result.status).send(result)
       }).catch((err) => {
-        res.status(err.statusCode).send(err);
+        res.status(err.status).send(err);
       })
   },
 
@@ -31,36 +31,36 @@ const authController = {
     if (!token) {
       res.status(400).send({
         message: "Token not be empty",
-        statusCode: 400,
+        status: 400,
       });
     } else {
       if (!code) {
         res.status(400).send({
           message: "Code Not Null",
-          statusCode: 400,
+          status: 400,
         });
       }
       jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
         if (err) {
           res.status(400).send({
             message: "Incorrect or Expired token",
-            statusCode: 400,
+            status: 400,
           });
         } else {
           console.log(decoded)
           if (decoded.code != code) {
             res.status(400).send({
               message: "Incorrect code input",
-              statusCode: 400
+              status: 400
             });
           }
           let data = decoded
           console.log(data)
           authModel.registerVerify(data)
             .then((result) => {
-              res.status(result.statusCode).send(result)
+              res.status(result.status).send(result)
             }).catch((err) => {
-              res.status(err.statusCode).send(err);
+              res.status(err.status).send(err);
             })
         }
       });
@@ -76,13 +76,13 @@ const authController = {
     if (!req.body.acc) {
       res.status(400).send({
         message: "User must accepted aggrement",
-        statusCode: 400,
+        status: 400,
       });
     }
     try {
       const result = await authModel.register(req.body);
-      const {user_id, username} = result.data
-      const token = jwt.sign({ user_id:user_id, username:username, code : code }, process.env.JWT_NODEMAILER_KEY, {
+      const { user_id, username } = result.data
+      const token = jwt.sign({ user_id: user_id, username: username, code: code }, process.env.JWT_NODEMAILER_KEY, {
         expiresIn: "20m",
       })
       transporter
@@ -98,19 +98,19 @@ const authController = {
           `, // html body
         })
         .then(() => {
-          
-          res.status(result.statusCode).send({
-            data : {
-              user_id : user_id,
-              username : username,
-              token : token
+
+          res.status(result.status).send({
+            data: {
+              user_id: user_id,
+              username: username,
+              token: token
             }
           });
         })
         .catch((err) => {
           res.status(500).send({
             message: `Register error ${err}`,
-            statusCode: 500,
+            status: 500,
           });
         });
     } catch (err) {
@@ -129,7 +129,7 @@ const authController = {
      if (!req.body.acc) {
        res.status(400).send({
          message: "User must accepted aggrement",
-         statusCode: 400,
+         status: 400,
        });
      }
      try {
@@ -151,7 +151,7 @@ const authController = {
          })
          .then(() => {
            console.log()
-           res.status(result.statusCode).send({
+           res.status(result.status).send({
              ...result,
              data : {
                ...req.body,
@@ -162,7 +162,7 @@ const authController = {
          .catch((err) => {
            res.status(500).send({
              message: `Register error ${err}`,
-             statusCode: 500,
+             status: 500,
            });
          });
      } catch (err) {
@@ -191,18 +191,18 @@ const authController = {
           `, // html body
         })
         .then(() => {
-          res.status(result.statusCode).send({
+          res.status(result.status).send({
             ...result,
           });
         })
         .catch(() => {
           res.status(500).send({
             message: "Error occurs",
-            statusCode: 500,
+            status: 500,
           });
         });
     } catch (err) {
-      res.status(err.statusCode).send(err);
+      res.status(err.status).send(err);
     }
   },
 
@@ -211,28 +211,28 @@ const authController = {
     // if (!token) {
     //   res.status(400).send({
     //     message: "Token not be empty",
-    //     statusCode: 400,
+    //     status: 400,
     //   });
     // } else {
     //   jwt.verify(token, process.env.JWT_NODEMAILER_KEY, (err, decoded) => {
     //     if (err) {
     //       res.status(400).send({
     //         message: "Incorrect or Expired token",
-    //         statusCode: 400,
+    //         status: 400,
     //       });
     //     } else {
     //       authModel.changeResquest(decoded)
     //         .then(result => {
     //           res.status(200).send({
     //             message: "Email verified",
-    //             statusCode: 200,
+    //             status: 200,
     //             data: result,
     //           });
     //         })
     //         .catch(err => {
     //           res.status(500).send({
     //             message: "Error when verified email",
-    //             statusCode: 500,
+    //             status: 500,
     //           })
     //         })
     //     }
@@ -244,13 +244,13 @@ const authController = {
     if (!req.body.id || !req.body.password || !req.body.confirm) {
       res.status(400).send({
         message: 'Error when changing password',
-        statusCode: 400,
+        status: 400,
       });
       return;
     } else if (req.body.password !== req.body.confirm) {
       res.status(400).send({
         message: 'Password doesn`t mate',
-        statusCode: 400,
+        status: 400,
       });
       return;
     }
@@ -259,9 +259,9 @@ const authController = {
     }
     try {
       const result = await authModel.changePassword(request);
-      res.status(result.statusCode).send(result);
+      res.status(result.status).send(result);
     } catch (err) {
-      res.status(err.statusCode).send(err);
+      res.status(err.status).send(err);
     }
   }
 };

@@ -1,15 +1,14 @@
 const fromResponse = (message, status, result) => {
-    return result !== null
-      ? {
-          message: message,
-          statusCode: status,
-          data: result,
-        }
-      : {
-          message: message,
-          statusCode: status,
-        };
-  };
-  
-  module.exports = fromResponse;
-  
+  return result !== null
+    ? {
+      message: message,
+      status: status,
+      data: result,
+    }
+    : {
+      message: message,
+      status: status,
+    };
+};
+
+module.exports = fromResponse;
