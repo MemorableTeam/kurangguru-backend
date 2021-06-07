@@ -37,7 +37,10 @@ const classModel = {
       pg.query(getClassBySchedule(request), (err, result) => {
         if (!err) {
           if (result.rowCount < 1) reject(fromResponse('Class not found!', 400))
-          resolve(fromResponse('Success!', 200, result.rows))
+          resolve(fromResponse('Success!', 200, {
+            day: request.day,
+            class_list: result.rows
+          }))
         } else {
           console.log(err)
           reject(fromResponse('Failed!', 500))
