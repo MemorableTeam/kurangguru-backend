@@ -14,18 +14,10 @@ const verifyToken = (req, res, next) => {
                 if(decoded.role == 'admin') next()
                 else if(decoded.role == 'user') next()
                 else if(decoded.role == 'fasilitator') next()
-                else if (decoded.id == req.query.id) next()
-                /* else formResponse({
-                    message: `Forbidden`,
-                    status: 403
-                }, res) */
+                else if (decoded.user_id == req.query.user_id) next()
                 else  res.status(403).send({message : 'Forbidden'})
             } else {
                 res.status(400).send({message : `${err.message},${bearerToken}`})
-               /*  formResponse({
-                    message: ,
-                    status: 400,
-                }, res) */
             }
         });
     }

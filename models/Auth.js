@@ -26,7 +26,7 @@ const authModel = {
                 if (!errComp) {
                   if (resComp) {
                     const payload = {
-                      id: result.rows[0].id,
+                      user_id: result.rows[0].id,
                       role: result.rows[0].role,
                       verified: result.rows[0].verified_at ? true : false,
                     };
@@ -37,9 +37,9 @@ const authModel = {
                         if (!errToken) {
                           resolve(
                             formResponse("Login success", 200, {
-                              id: result.rows[0].id,
+                              user_id: result.rows[0].id,
                               role: result.rows[0].role,
-                              verified: result.rows[0].verified_at ? true : false,
+                              verified: result.rows[0].verified_at !== null ? true : false,
                               token: resToken,
                             })
                           );
@@ -88,7 +88,7 @@ const authModel = {
                       console.log(result.rows[0].id);
                       resolve(
                         formResponse("Register sucsess", 201, {
-                          id: result.rows[0].id,
+                          user_id: result.rows[0].id,
                           username: username,
                         })
                       );
@@ -111,21 +111,22 @@ const authModel = {
 
   registerVerify: (request) => {
     return new Promise((resolve, reject) => {
-      const { username, id } = request;
+      const { username, user_id } = request;
+      console.log(user_id)
       pg.query(
-        `SELECT * FROM users WHERE id = '${id}'`,
+        `SELECT * FROM users WHERE id = '${user_id}'`,
         (err, val) => {
           if (!err) {
             console.log('tidak erorr 1')
             if (val.rows.length > 0) {
               pg.query(
-                `UPDATE users SET verified_at = 'NOW()' WHERE id = '${id}'`,
+                `UPDATE users SET verified_at = 'NOW()' WHERE id = '${user_id}'`,
                 (error, value) => {
                   if (!error) {
                     const payload = {
-                      id: val.rows[0].id,
+                      user_id: val.rows[0].id,
                       role: val.rows[0].role,
-                      verified: val.rows[0].verified_at ? true : false,
+                      verified: true,
                     };
                     jwt.sign(
                       payload,
@@ -134,7 +135,7 @@ const authModel = {
                         if (!errToken) {
                           resolve(
                             formResponse("Verify Success", 200, {
-                              id: val.rows[0].id,
+                              user_id: val.rows[0].id,
                               role: val.rows[0].role,
                               verified : val.rows[0].verified_at ? true : false,
                               token: resToken,
@@ -184,7 +185,7 @@ const authModel = {
   changePassword: (request) => {
     return new Promise((resolve, reject) => {
       pg.query(
-        `SELECT id from users WHERE id =  ${request.id}`,
+        `SELECT id from users WHERE id =  ${request.user_id}`,
         (err, result) => {
           if (!err) {
             if (result.rows.length < 1) {
