@@ -5,8 +5,8 @@ const jwt = require("jsonwebtoken");
 
 const authController = {
   testing:(req, res)=>{
-    id = req.query.id
-    res.status(200).send({id : id})
+    id = req.query.id_user
+    res.status(200).send({user_id : id})
   },
   login: (req, res) => {
     if (!req.body.email || !req.body.password) {
@@ -81,8 +81,8 @@ const authController = {
     }
     try {
       const result = await authModel.register(req.body);
-      const {id, username} = result.data
-      const token = jwt.sign({ id:id, username:username, code : code }, process.env.JWT_NODEMAILER_KEY, {
+      const {user_id, username} = result.data
+      const token = jwt.sign({ user_id:user_id, username:username, code : code }, process.env.JWT_NODEMAILER_KEY, {
         expiresIn: "20m",
       })
       transporter
@@ -98,9 +98,11 @@ const authController = {
           `, // html body
         })
         .then(() => {
-          console.log()
+          
           res.status(result.statusCode).send({
             data : {
+              user_id : user_id,
+              username : username,
               token : token
             }
           });
