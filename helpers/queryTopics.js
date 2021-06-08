@@ -14,9 +14,9 @@ const queryTopics = {
   },
 
   addTopics: (request) => {
-    const { topic_name,class_id, is_finished } = request;
+    const { topic_name, id_class, is_finished } = request;
     let query = `insert into topics (topic_name,id_class, is_finished)
-        VALUES('${topic_name}',${class_id}, '${is_finished}')`;
+        VALUES('${topic_name}',${id_class}, '${is_finished}')`;
 
     return query;
   },
