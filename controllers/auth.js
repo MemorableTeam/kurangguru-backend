@@ -1,4 +1,4 @@
-const authModel = require("../models/Auth");
+const authModel = require("../models/auth");
 const transporter = require("../helpers/sendMail")
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
