@@ -8,18 +8,25 @@ const queryTopics = {
         WHERE a.id_class = ${request.class_id} 
         ORDER BY a.id ASC`;
     }else{
-      query = `SELECT * FROM topics WHERE user_id=${request.user_Id} ORDER BY id ASC`;
+      query = `SELECT * FROM topics WHERE id_class=${request.class_id} ORDER BY id ASC`;
     }
     return query;
   },
 
   addTopics: (request) => {
-    const { topic_name, id_class, is_finished } = request;
+    const { topic_name,class_id, is_finished } = request;
     let query = `insert into topics (topic_name,id_class, is_finished)
-        VALUES('${topic_name}',${id_class}, '${is_finished}')`;
+        VALUES('${topic_name}',${class_id}, '${is_finished}')`;
 
     return query;
   },
+
+  deleteTopic : (request)=>{
+    const {topics_id} = request
+    let query = `DELETE FROM topics WHERE id = ${topics_id}`;
+
+    return query
+  }
 };
 
 module.exports = queryTopics;

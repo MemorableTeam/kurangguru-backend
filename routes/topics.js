@@ -8,8 +8,9 @@ const {
 } = require("../helpers/verifyToken");
 
 
-router.get("/", onlyReturnRole, topicsController.getTopics);
-router.post("/add", topicsController.addTopics);
+router.get("/", verifyId, topicsController.getTopics);
+router.post("/", verifyFasilitator, topicsController.addTopics);
 router.patch("/", topicsController.editTopics);
+router.delete("/", verifyFasilitator, topicsController.deleteTopic)
 
 module.exports = router;

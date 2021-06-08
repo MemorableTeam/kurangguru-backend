@@ -1,6 +1,6 @@
 const pg = require("../helpers/connection");
 const formResponse = require("../helpers/formResponse");
-const { getAll, addTopics } = require("../helpers/queryTopics");
+const { getAll, addTopics, deleteTopic } = require("../helpers/queryTopics");
 
 const topicsModel = {
   getAllTopics: (request) => {
@@ -26,7 +26,7 @@ const topicsModel = {
   addTopics: (request) => {
     return new Promise((resolve, reject) => {
       pg.query(
-        `SELECT * FROM topics where id_class = ${request.id_class} AND topic_name = '${request.topic_name}'`,
+        `SELECT * FROM topics where id_class = ${request.class_id} AND topic_name = '${request.topic_name}'`,
         (error, result) => {
           if (error) {
             reject(
@@ -51,7 +51,7 @@ const topicsModel = {
                 } else {
                   reject(
                     formResponse(
-                      "Failed! class progress alredy exits",
+                      `Failed! class progress alredy exits ${err}`,
                       400,
                       result.rows[0]
                     )
@@ -90,6 +90,21 @@ const topicsModel = {
           reject(formResponse('Error Update Topic'), 500)
         }
       })
+    })
+  },
+  deleteTopic :(request)=>{
+    return new Promise((resolve, reject)=>{
+      if(request.topics_id == null){
+        reject(formResponse('Topics Not Found', 400))
+      }else{
+        pg.query(deleteTopic(request),(err,res)=>{
+          if(!err){
+            resolve(formResponse('Success Delete Topic', 200))
+          }else{
+            reject(formResponse('Failed Delete Message', 500))
+          }
+        })
+      }
     })
   }
 };

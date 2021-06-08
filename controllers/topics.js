@@ -28,6 +28,16 @@ const topicsController = {
         res.status(err.status).send(err)
       })
     }
+  },
+  deleteTopic : (req, res) =>{
+      const request = {...req.query}
+      console.log(request)
+      topicsModel.deleteTopic(request)
+      .then((result)=>{
+        res.status(result.status).send(result)
+      }).catch((err)=>{
+        res.status(err.status).send(err)
+      })
   }
 };
 
