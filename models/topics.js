@@ -36,17 +36,33 @@ const topicsModel = {
         `SELECT * FROM topics where id_class = ${request.id_class} AND topic_name = '${request.topic_name}'`,
         (error, result) => {
           if (error) {
-            reject(formResponse(`Class progress alredy exits`, 400, result.rows[0]));
+            reject(
+              formResponse(`Class progress alredy exits`, 400, result.rows[0])
+            );
           } else {
             if (result.rows.length > 1) {
-                reject(formResponse(`Add Class Progress Failed`, 400, result.rows[0]))
+              reject(
+                formResponse(`Add Class Progress Failed`, 400, result.rows[0])
+              );
             } else {
               pg.query(addTopics(request), (err, res) => {
                 // console.log(err);
                 if (!err) {
-                    resolve(formResponse("Success! Add Class Progress", 201, result.rows[0]));
+                  resolve(
+                    formResponse(
+                      "Success! Add Class Progress",
+                      201,
+                      result.rows[0]
+                    )
+                  );
                 } else {
-                  reject(formResponse("Failed! class progress alredy exits", 400, result.rows[0]));
+                  reject(
+                    formResponse(
+                      "Failed! class progress alredy exits",
+                      400,
+                      result.rows[0]
+                    )
+                  );
                 }
               });
             }

@@ -11,12 +11,12 @@ const topicsController = {
   },
 
   addTopics: (req, res) => {
-    const request = { ...req.body }
-    topicsModel.addTopics(request)
-      .then(result => res.status(result.status).send(result))
-      .catch(err => res.status(err.status).send(err))
+    const request = { ...req.body };
+    topicsModel
+      .addTopics(request)
+      .then((result) => res.status(result.status).send(result))
+      .catch((err) => res.status(err.status).send(err));
   },
-
 };
 
 module.exports = topicsController;
