@@ -16,7 +16,8 @@ const classModel = {
           pg.query(getAll(request).getTotalPage, (err2, total) => {
             if (!err2) {
               resolve(fromResponse('Success!', 200, {
-                total_pages: Math.ceil(total.rowCount / (request.page_size || 10)),
+                total_data: total.rowCount,
+                total_pages: Math.ceil(total.rows.length / (request.page_size || 10)),
                 page_size: request.page_size || 10,
                 current_page: request.current_page || 1,
                 class_list: result.rows
