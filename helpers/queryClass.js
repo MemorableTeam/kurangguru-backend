@@ -3,8 +3,8 @@ const queryClass = {
     let query = `select a.id, a.name, a.category, a.description, a.level, a.price, a.day, a.start_time, a.end_time from class as a left join user_class as b on b.class_id = a.id where b.user_id is null or b.user_id != ${request.user_id}`
 
     if (request.category) query = `select * from (${query}) as a where a.category = '${request.category}'`
-    if (request.price) query = `select * from (${query}) as a where a.price = '${request.price}'`
     if (request.level) query = `select * from (${query}) as a where a.level = '${request.level}'`
+    if (request.price) request.price === 'free' ? query = `select * from (${query}) as a where a.price = 0` : query = `select * from (${query}) as a where a.price > 0`
 
     const getTotalPage = `select * from (${query}) as a`
     const queryPaginate = `select * from (${query}) as a LIMIT ${request.page_size || 10} OFFSET ${((request.current_page || 1) - 1) * (request.page_size || 10)}`
