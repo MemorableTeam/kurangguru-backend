@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const memberController = require("../controllers/Members");
+const memberController = require("../controllers/members");
 const verifyToken = require('../helpers/verifyToken')
 
 router.get("/", memberController.getMembers);
