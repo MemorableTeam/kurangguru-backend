@@ -56,7 +56,6 @@ const classModel = {
           if (result.rowCount < 1) reject(fromResponse('Class not found!', 400))
           resolve(fromResponse('Success!', 200, result.rows))
         } else {
-          console.log(err)
           reject(fromResponse('Failed!', 500))
         }
       })
@@ -70,6 +69,7 @@ const classModel = {
           if (result.rowCount < 1) reject(fromResponse('Class not found!', 400))
           resolve(fromResponse('Success!', 200, result.rows[0]))
         } else {
+          console.log(err)
           reject(fromResponse('Failed!', 500))
         }
       })

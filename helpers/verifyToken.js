@@ -9,7 +9,7 @@ const verifyToken = {
 			jwt.verify(bearerToken.split(' ')[1], process.env.SECRET_KEY, function (err, decoded) {
 				if (!err) {
 					req.query.role = decoded.role
-					if (decoded.id == req.query.user_id) next()
+					if (decoded.user_id == req.query.user_id) next()
 					else res.status(403).send({ message: 'Forbidden', status: 403 })
 				} else {
 					res.status(400).send({ message: `${err.message},${bearerToken}`, status: 400 })

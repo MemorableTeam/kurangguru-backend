@@ -2,7 +2,7 @@ const setupRouter = require('./setup')
 const userRouter = require('./users');
 const useAuth = require('./auth');
 const classRouter = require('./class');
-const topics =require('./topics')
+const topics = require('./topics')
 
 const router = (app, prefix) => {
   // app.use(`${prefix}/route`, router)
