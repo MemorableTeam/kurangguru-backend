@@ -1,9 +1,15 @@
 const queryTopics = {
-  getAll: () => {
-    let query = `SELECT topics.id, id_class, topics.topic_name, topics.is_finished, score.score
-        FROM topics
-        LEFT JOIN score ON topics.id_class = score.score 
-        ORDER BY topics.topic_name `;
+  getAll: (request) => {
+    let query = null;
+    if(request.role == 'user'){
+      query = `SELECT a.*, b.score
+        FROM topics AS a
+        LEFT JOIN (SELECT a.* FROM score AS a INNER JOIN users AS b ON a.user_id = b.id WHERE b.id = ${request.user_id}) AS b ON b.topic_id = a.id
+        WHERE a.id_class = ${request.class_id} 
+        ORDER BY a.id ASC`;
+    }else{
+      query = `SELECT * FROM topics WHERE user_id=${request.user_Id} ORDER BY id ASC`;
+    }
     return query;
   },
 

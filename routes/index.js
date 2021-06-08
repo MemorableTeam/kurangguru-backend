@@ -1,6 +1,6 @@
 const setupRouter = require('./setup')
 const userRouter = require('./users');
-const useAuth = require('./Auth');
+const useAuth = require('./auth');
 const classRouter = require('./class');
 const topics =require('./topics')
 

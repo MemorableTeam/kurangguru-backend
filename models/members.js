@@ -4,7 +4,7 @@ const formResponse = require('../helpers/formResponse')
 
 const memberModel = {
     getMembers : (req, res)=>{
-
+        
     },
     addMember : (req, res)=>{
 

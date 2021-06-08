@@ -10,5 +10,6 @@ const {
 
 router.get("/", onlyReturnRole, topicsController.getTopics);
 router.post("/add", topicsController.addTopics);
+router.patch("/", topicsController.editTopics);
 
 module.exports = router;

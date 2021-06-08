@@ -4,27 +4,20 @@ const { getAll, addTopics } = require("../helpers/queryTopics");
 
 const topicsModel = {
   getAllTopics: (request) => {
-    console.log(request);
     return new Promise((resolve, reject) => {
       pg.query(getAll(request), (err, response) => {
-        console.log(err, "ini err");
-        console.log(response);
+        console.log(err)
         if (!err) {
-          console.log(!err, "!err");
+          console.log(response)
           if (response.rows.length < 1) {
-            if (request.role === "users")
-              reject(
-                formResponse(`Class Progress not foundt`, 400, {
-                  data: {
-                    score: score,
-                  },
-                })
-              );
+            reject(`Topic Not Found`, 404)
           } else {
             resolve(
-              formResponse(`Class Progress In here`, 200, response.rows[0])
+              formResponse(`Class Progress In here`, 200, response.rows)
             );
           }
+        }else{
+          reject('Error Get Data ', 500)
         }
       });
     });
@@ -71,6 +64,34 @@ const topicsModel = {
       );
     });
   },
+  editTopic : (request)=>{
+    /* const {topics_name, is_finished} = request */
+    return new Promise((resolve, reject)=>{
+      pg.query(`SELECT * FROM topics WHERE id=${request.topics_id}`, (error, result)=>{
+        if(!error){
+          if(result.rows.length < 1) {
+            reject(formResponse('Data Not Found'), 404)
+          }else{
+            const newBody = {
+              id_class:request.id_class ?? result.rows[0].id_class,
+              topics_name : request.topics_name ?? result.rows[0].topic_name,
+              is_finished : request.is_finished ?? result.rows[0].is_finished
+            }
+            const {id_class, topics_name, is_finished} = newBody
+            pg.query(`UPDATE topics SET id_class='${id_class}', topic_name = '${topics_name}', is_finished = '${is_finished}' WHERE id=${request.topics_id}`,(err, res)=>{
+              if(!err){
+                resolve(formResponse('Update Success', 200))
+              }else{
+                reject(formResponse('Update Failed', 500))
+              }
+            })
+          }
+        }else{
+          reject(formResponse('Error Update Topic'), 500)
+        }
+      })
+    })
+  }
 };
 
 module.exports = topicsModel;
