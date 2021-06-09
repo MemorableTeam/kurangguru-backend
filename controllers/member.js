@@ -4,6 +4,7 @@ const memberController = {
   getAllMember: (req, res) => {
     const request = { ...req.query }
     if (request.user_id) {
+      if (request.role !== 'fasilitator') res.status(403).send({ message: 'Forbidden', status: 403 })
       memberModel.getMemberById(request)
         .then(result => res.status(result.status).send(result))
         .catch(err => res.status(err.status).send(err))

@@ -1,14 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const memberController = require("../controllers/member");
-const verifyToken = require('../helpers/verifyToken')
+const { verifyFasilitator, userOrFasilitator, onlyReturnRole } = require('../helpers/verifyToken')
 
-router.get("/", memberController.getAllMember);
+router.get("/", onlyReturnRole, memberController.getAllMember);
 
-router.patch("/", memberController.editMember);
+router.patch("/", verifyFasilitator, memberController.editMember);
 
-router.post("/", memberController.addMember);
+router.post("/", userOrFasilitator, memberController.addMember);
 
-router.delete("/", memberController.deleteMember);
+router.delete("/", verifyFasilitator, memberController.deleteMember);
 
 module.exports = router;
