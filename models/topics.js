@@ -16,7 +16,7 @@ const topicsModel = {
               formResponse(`Class Progress In here`, 200, response.rows)
             );
           }
-        }else{
+        } else {
           reject('Error Get Data ', 500)
         }
       });
@@ -64,43 +64,43 @@ const topicsModel = {
       );
     });
   },
-  editTopic : (request)=>{
+  editTopic: (request) => {
     /* const {topics_name, is_finished} = request */
-    return new Promise((resolve, reject)=>{
-      pg.query(`SELECT * FROM topics WHERE id=${request.topics_id}`, (error, result)=>{
-        if(!error){
-          if(result.rows.length < 1) {
+    return new Promise((resolve, reject) => {
+      pg.query(`SELECT * FROM topics WHERE id=${request.id}`, (error, result) => {
+        if (!error) {
+          if (result.rows.length < 1) {
             reject(formResponse('Data Not Found'), 404)
-          }else{
+          } else {
             const newBody = {
-              id_class:request.id_class ?? result.rows[0].id_class,
-              topics_name : request.topics_name ?? result.rows[0].topic_name,
-              is_finished : request.is_finished ?? result.rows[0].is_finished
+              id_class: request.id_class ?? result.rows[0].id_class,
+              topics_name: request.topics_name ?? result.rows[0].topic_name,
+              is_finished: request.is_finished ?? result.rows[0].is_finished
             }
-            const {id_class, topics_name, is_finished} = newBody
-            pg.query(`UPDATE topics SET id_class='${id_class}', topic_name = '${topics_name}', is_finished = '${is_finished}' WHERE id=${request.topics_id}`,(err, res)=>{
-              if(!err){
+            const { id_class, topics_name, is_finished } = newBody
+            pg.query(`UPDATE topics SET id_class='${id_class}', topic_name = '${topics_name}', is_finished = '${is_finished}' WHERE id=${request.topics_id}`, (err, res) => {
+              if (!err) {
                 resolve(formResponse('Update Success', 200))
-              }else{
+              } else {
                 reject(formResponse('Update Failed', 500))
               }
             })
           }
-        }else{
+        } else {
           reject(formResponse('Error Update Topic'), 500)
         }
       })
     })
   },
-  deleteTopic :(request)=>{
-    return new Promise((resolve, reject)=>{
-      if(request.topics_id == null){
+  deleteTopic: (request) => {
+    return new Promise((resolve, reject) => {
+      if (request.id == null) {
         reject(formResponse('Topics Not Found', 400))
-      }else{
-        pg.query(deleteTopic(request),(err,res)=>{
-          if(!err){
+      } else {
+        pg.query(deleteTopic(request), (err, res) => {
+          if (!err) {
             resolve(formResponse('Success Delete Topic', 200))
-          }else{
+          } else {
             reject(formResponse('Failed Delete Message', 500))
           }
         })
