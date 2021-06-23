@@ -15,6 +15,9 @@ To get the Node server running locally:
 
 Open [schema](https://drawsql.app/dea/diagrams/Kurangguru)
 
+## Database
+Open [database](https://drive.google.com/file/d/1ZgjPSZA6d_1-LZnM1kTmspUnGlLcN5gV/view?usp=sharing)
+
 ## Folder Structure
 
     ├── controllers                    
