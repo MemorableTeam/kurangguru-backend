@@ -16,6 +16,8 @@ const whitelist = [
   "http://localhost:3003",
   "http://34.232.17.16:3003",
   "http://localhost:7001",
+  "http://kurangguru.mooo.com",
+  "https://kurangguru.mooo.com",
 ];
 const corsOptions = {
   origin: function (origin, callback) {
