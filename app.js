@@ -18,6 +18,8 @@ const whitelist = [
   "http://localhost:7001",
   "http://kurangguru.mooo.com",
   "https://kurangguru.mooo.com",
+  "http://kurangguru.rpetz.my.id",
+  "https://kurangguru.rpetz.my.id",
 ];
 const corsOptions = {
   origin: function (origin, callback) {
