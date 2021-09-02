@@ -20,6 +20,7 @@ const whitelist = [
   "https://kurangguru.mooo.com",
   "http://kurangguru.rpetz.my.id",
   "https://kurangguru.rpetz.my.id",
+  "https://kurangguru-frontend-sigma.vercel.app"
 ];
 const corsOptions = {
   origin: function (origin, callback) {
