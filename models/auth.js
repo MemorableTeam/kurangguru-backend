@@ -52,6 +52,7 @@ const authModel = {
                       }
                     );
                   } else {
+                    
                     reject(formResponse("Wrong email/password", 400));
                   }
                 } else {
