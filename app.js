@@ -19,7 +19,7 @@ const whitelist = [
   "http://kurangguru.mooo.com",
   "https://kurangguru.mooo.com",
   "https://kurangguru-frontend-mcb8ndekd-memo-rable-t.vercel.app",
-  "https://kurangguru-frontend.vercel.app/",
+  "https://kurangguru-frontend.vercel.app",
 ];
 const corsOptions = {
   origin: function (origin, callback) {
